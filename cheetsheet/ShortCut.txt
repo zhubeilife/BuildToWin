@@ -1,0 +1,22 @@
+Linux:
+    1-Alt + Tab
+        不同的程序间切换
+    2-Super + w
+        显示所有打开的界面
+    3-
+
+Terminator
+    1-Ctrl+Shift+ O/E
+        Split terminals Horizontally/Vertically.
+    2-Ctrl+Shift+ Right/Left/Up/Down
+        Change the size of the window
+    3-Ctrl+Shift+ F
+        Search within terminal scrollback
+    4-Ctrl+Shift+ N/P
+        Move to the next or previous window.
+    5-Ctrl+Shift+ C/V
+        Copy and paste selected text to clipboard
+    6-Ctrl+Shift+ W
+        Close the current terminal.
+    7-Ctrl+Shift+ Q
+        Quits Terminator
