@@ -16,6 +16,14 @@ cleanup() {
     # script cleanup here
 }
 
+# To Avoid different between zsh and bash
+# zsh array index is start with 1
+# where bash is start with 0
+function _detect_array_start_index() {
+    local x=(0 -1)
+    echo "${x[1]}"
+}
+
 die() {
     local msg=$1
     local code=${2-1} # default exit status 1
