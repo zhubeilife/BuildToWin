@@ -18,4 +18,8 @@
 
 ## Shell
 
++ ShellCheck
+
++ shfmt
+
 ## Markdown

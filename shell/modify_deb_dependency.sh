@@ -5,13 +5,8 @@ if [[ -z "$1" ]]; then
     exit 1
 fi
 DEBFILE="$1"
-TMPDIR=mktemp -d /tmp/deb.XXXXXXXXXX || exit 1
-OUTPUT=basename "$DEBFILE" .deb.modfied.deb
-if [[ -e "$OUTPUT" ]]; then
-    echo "$OUTPUT exists."
-    rm -r "$TMPDIR"
-    exit 1
-fi
+TMPDIR=$(mktemp -d /tmp/deb.XXXXXXXXXX || exit 1)
+OUTPUT=$(basename "$DEBFILE").modfied.deb
 dpkg-deb -x "$DEBFILE" "$TMPDIR"
 dpkg-deb --control "$DEBFILE" "$TMPDIR"/DEBIAN
 if [[ ! -e "$TMPDIR"/DEBIAN/control ]]; then
