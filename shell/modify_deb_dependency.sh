@@ -21,7 +21,7 @@ if [[ ! -e "$TMPDIR"/DEBIAN/control ]]; then
 fi
 CONTROL="$TMPDIR"/DEBIAN/control
 MOD=stat -c "%y" "$CONTROL"
-vi "$CONTROL"
+vim "$CONTROL"
 if [[ "$MOD" == stat -c "%y" "$CONTROL" ]]; then
     echo Not modfied.
 else
