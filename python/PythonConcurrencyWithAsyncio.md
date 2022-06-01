@@ -1,4 +1,4 @@
-# Python Concurrency with aasyncio
+# Python Concurrency with asyncio
 
 ## Chapter1 Getting to know asyncio
 
@@ -67,3 +67,28 @@ asyncio.run(main())
 `Task, coroutines, futures, and awaitables`
 
 ![TheClassInheritanceHierarchyOfAwaitable](./TheClassInheritanceHierarchyOfAwaitable.png)
+
+`Accessing and munually managling the event loop`
+
+asyncio.run() is doing as above
+
+```python
+import asyncio
+
+
+async def main():
+    await asyncio.sleep(1)
+
+
+loop = asyncio.new_event_loop()
+
+try:
+    loop.run_until_complete(main())
+finally:
+    loop.close()
+```
+
+## Chapter3 A first asyncio application
+
+## Chapter4 Concurrent web requests
+
