@@ -1,11 +1,16 @@
 
-熟悉路径规划相关算法（A*，RRT，Lattice planner等），了解机器人决策系统，如决策状态机、决策树、专家系统，强化学习，POMDP等
+# Motion Planning
 
-3、熟悉基于图搜索、采样、拟合、优化等规划算法，如A*，Lattice，Bezier，EM等；
+## 常见算法
 
-4、在以下一个或多个方面具有深入理解和丰富经验：路径规划、搜索算法、曲线拟合、状态机设计、基于 learning的决策规划、场景理解与行为预测；
++ Dijkstra’s algorithm. If the heuristic cost-to-go is always estimated as zero then A ∗ always explores from the OPEN node that has been reached with minimum past cost. This variant is called Dijkstra’s algorithm, which preceded A ∗ historically. Dijkstra’s algorithm is also guaranteed to ﬁnd a minimum-cost path but on many problems it runs more slowly than A ∗ owing to the lack of a heuristic look-ahead function to help guide the search.
 
++ Breadth-first search. If each edge in E has the same cost, Dijkstra’s algorithm reduces to breadth-first search. All nodes one edge away from the start node are considered first, then all nodes two edges away, etc. The first solution found is therefore a minimum-cost path.
 
-机械臂和AGV的导航的关系？
+## 自动驾驶
 
-常见的moveit ompl 还有AGV导航的包里包含了啥算法？
+![TaxonomyOfMotionPlanningInAutomatedDrivingScenarios](./TaxonomyOfMotionPlanningInAutomatedDrivingScenarios.jpeg)
+
+![CompareOfMotionPlanningInAutomatedDrivingScenarios](CompareOfMotionPlanningInAutomatedDrivingScenarios.jpeg)
+
+![规划算法](./guihua.jpeg)
