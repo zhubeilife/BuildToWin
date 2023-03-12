@@ -1,0 +1,177 @@
+1- 这个的目的是看stm32如何通过makefile进行编译，并且怎么加入c++的程序。现在了解的就是
+    .s   ---arm-none-eabi-as --->
+    .c   ---arm-none-eabi-gcc--->   .o ---arm-none-eabi-ld---> .bin
+    .cpp ---arm-none-eabi-g++--->
+
+    首先都编译成object的文件，然后链接。
+2- somelink
+    GCC - ARM relatated option
+    https://gcc.gnu.org/onlinedocs/gcc/ARM-Options.html
+    GCC- Option
+    https://gcc.gnu.org/onlinedocs/gcc-8.1.0/gcc/Option-Summary.html#Option-Summary
+    Customizable Makefile for GCC ARM Embedded Toolchain<--->mcufreak_makefile
+    http://mcufreaks.blogspot.com/2013/03/customizable-makefile-for-gcc-arm.html
+
+
+3- Toolchain - Name convention
+    Toolchain has a name convention:
+    arch[-vendor][-os]-abi
+      1-arch - architecture
+        arm, mips, x86, i686, etc.
+      2-vendor - tool chain supplier
+      3-os - operating system
+        linux, none (bare metal)
+      4-abi - application binary interface 
+        eabi, gnueabi, gnueabihf
+ 
+
+######################################
+# 0- target
+######################################
+TARGET = makefile_01
+
+
+######################################
+# 0- building variables
+######################################
+# debug build?
+# None / Minimal(-g1) / Default(-g) / Maximum(-g3)
+DEBUG = 1
+# optimization
+# None(-O0) / Optimize for debugging(-Og) / Optimize(-O1)
+# Optimize More(-O2) / Optimize Most(-O3) / Optimize for sieze(-Os)
+# Optimize for speed(-Ofast)
+OPT = -Og
+
+
+#######################################
+# 0- paths
+#######################################
+# Build path
+BUILD_DIR = build
+##GCC_PATH  =
+
+
+######################################
+# 1- source file
+######################################
+# C sources
+C_SOURCES =  \
+Src/main.c \
+Src/gpio.c \
+Src/stm32f4xx_it.c \
+Src/stm32f4xx_hal_msp.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
+Src/system_stm32f4xx.c
+
+# CPP sources
+CPP_SOURCES = \
+
+# ASM sources
+ASM_SOURCES =  \
+startup_stm32f429xx.s
+
+
+#######################################
+# 2- binaries
+### Questions-1: AS has different like: (PREFIX)gcc \ (PREFIX)as
+#######################################
+PREFIX = arm-none-eabi-
+# The gcc compiler bin path can be either defined in make command via GCC_PATH variable (> make GCC_PATH=xxx)
+# either it can be added to the PATH environment variable.
+ifdef GCC_PATH
+CC  = $(GCC_PATH)/$(PREFIX)gcc
+### assembler-with-cpp means preprocessor assembler
+AS  = $(GCC_PATH)/$(PREFIX)gcc -x assembler-with-cpp
+CP  = $(GCC_PATH)/$(PREFIX)objcopy
+SZ  = $(GCC_PATH)/$(PREFIX)size
+CPP = $(GCC_PATH)/$(PREFIX)g++
+else
+CC  = $(PREFIX)gcc
+AS  = $(PREFIX)gcc -x assembler-with-cpp
+CP  = $(PREFIX)objcopy
+SZ  = $(PREFIX)size
+CPP = $(PREFIX)g++
+endif
+HEX = $(CP) -O ihex
+BIN = $(CP) -O binary -S
+
+
+#######################################
+# 3- CFLAGS
+#######################################
+## Target or Arch
+# cpu
+CPU = -mcpu=cortex-m4
+
+# fpu
+FPU = -mfpu=fpv4-sp-d16
+
+# float-abi
+FLOAT-ABI = -mfloat-abi=hard
+
+# mcu
+MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
+## end of Target or Arch
+
+
+# macros for gcc
+# AS defines
+AS_DEFS =
+
+# C defines symbols
+C_DEFS =  \
+-DUSE_HAL_DRIVER \
+-DSTM32F429xx \
+-D__weak="__attribute__((weak))" \
+-D__packed="__attribute__((__packed__))"
+
+# AS includes
+AS_INCLUDES =
+
+# C includes
+C_INCLUDES =  \
+-IInc \
+-IDrivers/STM32F4xx_HAL_Driver/Inc \
+-IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy \
+-IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
+-IDrivers/CMSIS/Include
+
+# compile gcc flags
+ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
+
+CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
+
+ifeq ($(DEBUG), 1)
+CFLAGS += -g -gdwarf-2
+endif
+
+
+# Generate dependency information
+CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
+
+
+#######################################
+# LDFLAGS
+#######################################
+# link script
+LDSCRIPT = STM32F429ZITx_FLASH.ld
+
+# libraries
+LIBS = -lc -lm -lnosys
+LIBDIR =
+LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
+
